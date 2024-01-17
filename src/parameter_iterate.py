@@ -6,6 +6,7 @@ values of k first (n is not a multiple of d)
 when d>1, treat each point by it's maximum k among the coordinates
 """
 
+from random import random
 from typing import Callable, Optional, Tuple, TypeVar, Iterable
 # pylint:disable=import-error
 from adic_rational import AdicRational
@@ -83,11 +84,12 @@ class MultiParameterIterator:
             #pylint:disable=unused-variable
             cur_denom_count_leq,cur_denom_count_equal = \
                 AdicRational(1,tup[0].denominator_base,cur_denom_power).count_with_denom()
-            raise NotImplementedError
-            #pylint:disable=unreachable
-            how_many_present = 0
+            cur_denom_count_lt = cur_denom_count_leq - cur_denom_count_equal
+            how_many_present = cur_denom_count_leq**len(tup)-cur_denom_count_lt**len(tup)
             if how_many_should_be >= how_many_present:
                 return True
+            keep = random()<(how_many_should_be/how_many_present)
+            return keep
         self._underlying = filter(decimator,self._underlying)
 
     def __iter__(self):
@@ -125,7 +127,7 @@ if __name__ == "__main__":
     else:
         print("Finished the iterator before needing to break manually")
     print("Try again")
-    np = MultiParameterIterator(2,2,lambda _: 9)
+    np = MultiParameterIterator(2,2,lambda _: 9, 9)
     # pylint:disable = invalid-name
     index = 0
     for cur in np:

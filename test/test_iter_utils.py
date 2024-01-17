@@ -15,5 +15,5 @@ def test_head():
                 [(0,False),(1,False),(2,True),(3,True)],
                 [(0,False),(1,False),(2,False),(3,False),(4,True),(5,True),(6,True)]]
     after_iter = iter(with_heads(my_iter))
-    for idx,x in enumerate(after_iter):
-        assert list(x) == expected[idx]
+    for idx,observed_idx in enumerate(after_iter):
+        assert list(observed_idx) == expected[idx]
