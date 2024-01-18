@@ -9,7 +9,7 @@ class AdicRational:
     unreduced rational number
     where denominator is power of given base
     """
-    def __init__(self,numerator,denominator_base,denominator_power):
+    def __init__(self,numerator : int,denominator_base : int,denominator_power : int):
         self.numerator = numerator
         self.denominator_base = denominator_base
         self.denominator_power = denominator_power

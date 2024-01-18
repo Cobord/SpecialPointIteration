@@ -127,7 +127,7 @@ if __name__ == "__main__":
     else:
         print("Finished the iterator before needing to break manually")
     print("Try again")
-    np = MultiParameterIterator(2,2,lambda _: 9, 9)
+    np = MultiParameterIterator(2,2,lambda _: 9, 11)
     # pylint:disable = invalid-name
     index = 0
     for cur in np:
