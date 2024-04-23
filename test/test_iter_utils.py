@@ -1,7 +1,7 @@
 """
 test the iterator utilities
 """
-from src.iter_utils import with_heads
+from src.iter_utils import with_heads # pytest ../test/*.py from src
 
 def test_head():
     """
