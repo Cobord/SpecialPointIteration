@@ -134,7 +134,7 @@ class BoxIterator:
         return standard_pt,self._post_transformation(standard_pt)
 
     def __check_bounding_box(self,bounding_box : Optional[List[Tuple[float,float]]],
-                             num_dimensions : Optional[int]) -> None:
+                             num_dimensions : Optional[int]) -> List[Tuple[float,float]]:
         if bounding_box is None and num_dimensions is None:
             raise ValueError(
                 "At least the number of dimensions or the bounding box must be explicit")
@@ -194,9 +194,10 @@ class BoxIterator:
     def zoom_in(self, this_point: Tuple[AdicRational,...]) -> BoxIterator:
         """
         another BoxIterator which is zoomed in around the given point
+        assumes that self was done with a coordinatewise BoxTransformation
         """
         to_return = BoxIterator(num_dimensions = 1)
-        #pylint:disable=protected-access
+        #pylint:disable=protected-access,attribute-defined-outside-init
         to_return._num_dimensions = self._num_dimensions
         def make_zoomed_in(box: List[Tuple[float,float]],
                            this_point: Tuple[AdicRational,...]) -> \
@@ -205,9 +206,9 @@ class BoxIterator:
             denominator_base = this_point[0].denominator_base
             num_dimensions = len(this_point)
             zoomed_in_factor = cur_denom_power+1
+            #pylint:disable=unnecessary-comprehension
             new_box = [(z0,z1) for (z0,z1) in box]
             hits_boundary = False
-            zoomed_in_center = [r.clone() for r in this_point]
             for idx in range(num_dimensions):
                 for_one_end = list(map(lambda r: r.clone(),this_point))
                 for_one_end[idx] = for_one_end[idx] + \
@@ -223,6 +224,12 @@ class BoxIterator:
                     hits_boundary = True
             if not hits_boundary:
                 return this_point,zoomed_in_factor,new_box
+            # if we don't need to worry about the points yielded by to_return
+            #   to be within the original box, e.g. periodicity
+            #   or just an arbitrary restriction on domain
+            #   then we can use this the same return
+            #   it all depends on what self._post_transformation does with stuff outside
+            #   [-1,1]^d
             return this_point,zoomed_in_factor,new_box
         zoomed_in_center,zoomed_in_factor,zoomed_in_box = \
             make_zoomed_in(self._bounding_box,this_point)
