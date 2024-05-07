@@ -6,6 +6,7 @@ values of k first (n is not a multiple of d)
 when d>1, treat each point by it's maximum k among the coordinates
 """
 
+from __future__ import annotations
 from random import random
 from typing import Callable, Optional, Tuple, TypeVar, Iterable
 # pylint:disable=import-error
@@ -21,10 +22,10 @@ class OneParameterIterator:
     def __init__(self, denominator_localization : int,
                  hard_denominator_power_cut : Optional[int] = None):
         assert denominator_localization > 1
-        self.denominator_localization = denominator_localization
-        self.current_denominator = 1
-        self.current_denominator_power = 0
-        self.hard_denominator_power_cut = hard_denominator_power_cut
+        self._denominator_localization = denominator_localization
+        self._current_denominator = 1
+        self._current_denominator_power = 0
+        self._hard_denominator_power_cut = hard_denominator_power_cut
     def __iter__(self):
         """
         itself
@@ -36,21 +37,33 @@ class OneParameterIterator:
         then multiply the denominator by denominator_localization
         to go to the next value of k
         """
-        if self.hard_denominator_power_cut is not None and \
-            self.current_denominator_power>self.hard_denominator_power_cut:
+        if self._hard_denominator_power_cut is not None and \
+            self._current_denominator_power>self._hard_denominator_power_cut:
             raise StopIteration
-        if self.current_denominator == 1:
-            self.current_denominator_power += 1
-            self.current_denominator *= self.denominator_localization
+        if self._current_denominator == 1:
+            self._current_denominator_power += 1
+            self._current_denominator *= self._denominator_localization
             numerators : Iterable[int] = [-1,0,1]
             denominator_power = 0
         else:
-            numerators = (i for i in range(-self.current_denominator,self.current_denominator)\
-                          if i % self.denominator_localization != 0)
-            denominator_power = self.current_denominator_power
-            self.current_denominator_power += 1
-            self.current_denominator *= self.denominator_localization
-        return (numerators,(self.denominator_localization,denominator_power))
+            numerators = (i for i in range(-self._current_denominator,self._current_denominator)\
+                          if i % self._denominator_localization != 0)
+            denominator_power = self._current_denominator_power
+            self._current_denominator_power += 1
+            self._current_denominator *= self._denominator_localization
+        return (numerators,(self._denominator_localization,denominator_power))
+
+    def deep_copy(self) -> OneParameterIterator:
+        """
+        a copy that is reset from the beginning
+        """
+        return OneParameterIterator(self._denominator_localization,self._hard_denominator_power_cut)
+
+    def get_current_denominator(self) -> int:
+        """
+        read access _current_denominator
+        """
+        return self._current_denominator
 
 class MultiParameterIterator:
     """
@@ -61,7 +74,9 @@ class MultiParameterIterator:
                  hard_denominator_power_cut : Optional[int] = None):
         assert denominator_localization > 1
         assert num_dimensions >= 1
+        self._denominator_localization = denominator_localization
         self._num_dimensions = num_dimensions
+        self._hard_denominator_power_cut = hard_denominator_power_cut
         self._one_param = OneParameterIterator(denominator_localization, hard_denominator_power_cut)
         self._underlying = \
             make_n_param_version(
@@ -72,6 +87,7 @@ class MultiParameterIterator:
                 ),
                 self._num_dimensions
             )
+        self._expected_per_denominator = expected_per_denominator
         if expected_per_denominator is not None:
             self.__decimate_me(expected_per_denominator)
 
@@ -104,6 +120,15 @@ class MultiParameterIterator:
         """
         return self._underlying.__next__()
 
+    def deep_copy(self) -> MultiParameterIterator:
+        """
+        a copy that is reset from the beginning
+        """
+        return MultiParameterIterator(denominator_localization=self._denominator_localization,
+                                      num_dimensions=self._num_dimensions,
+                                      expected_per_denominator=self._expected_per_denominator,
+                                      hard_denominator_power_cut=self._hard_denominator_power_cut)
+
 if __name__ == "__main__":
     p = OneParameterIterator(2)
     for cur in p:
@@ -112,7 +137,7 @@ if __name__ == "__main__":
         for num in cur[0]:
             to_print += f"{num}/{cur[1][0]}^{cur[1][1]},"
         print(to_print)
-        if p.current_denominator>16:
+        if p.get_current_denominator()>16:
             break
     p = OneParameterIterator(4,0)
     np = make_n_param_version(

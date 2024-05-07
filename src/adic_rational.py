@@ -2,6 +2,7 @@
 rational of the form a/b^d
 """
 
+from __future__ import annotations
 from typing import Tuple
 
 class AdicRational:
@@ -42,3 +43,36 @@ class AdicRational:
         convert to float
         """
         return self.numerator/(self.denominator_base**self.denominator_power)
+
+    def rescale(self, zoom_in_factor: int) -> AdicRational:
+        """
+        zoom in by self.denominator_base^zoom_in_factor
+        """
+        return AdicRational(self.numerator,
+                            self.denominator_base,
+                            self.denominator_power+zoom_in_factor)
+
+    def __add__(self, other : AdicRational) -> AdicRational:
+        """
+        add two adic rationals with same denominator base
+        """
+        if self.denominator_base != other.denominator_base:
+            raise ValueError("Mismatched bases")
+        if self.denominator_power>other.denominator_power:
+            other_numerator_rescaling = \
+                self.denominator_base**(self.denominator_power - other.denominator_power)
+            return AdicRational(self.numerator + other.numerator*other_numerator_rescaling,
+                                self.denominator_base,self.denominator_power)
+        if other.denominator_power<self.denominator_power:
+            self_numerator_rescaling = \
+                self.denominator_base**(other.denominator_power - self.denominator_power)
+            return AdicRational(self.numerator*self_numerator_rescaling + other.numerator,
+                                self.denominator_base,self.denominator_power)
+        return AdicRational(self.numerator + other.numerator,
+                            self.denominator_base,self.denominator_power)
+
+    def clone(self) -> AdicRational:
+        """
+        Clone a AdicRational
+        """
+        return AdicRational(self.numerator,self.denominator_base,self.denominator_power)

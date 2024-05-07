@@ -2,7 +2,7 @@
 iterator utilities
 """
 
-from typing import Tuple, Iterator, TypeVar
+from typing import List, Tuple, Iterator, TypeVar
 from itertools import product as iterprod
 from itertools import chain
 
@@ -17,7 +17,7 @@ def with_heads(my_iter : Iterator[Iterator[A]]):
     """
     # pylint:disable = invalid-name
     it = iter(my_iter)
-    head_so_far = []
+    head_so_far : List[A] = []
     for cur_seg in it:
         cur_seg_list = list(cur_seg)
         yield chain(
