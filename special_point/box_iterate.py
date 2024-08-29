@@ -29,7 +29,7 @@ class BoxIterator:
     special points in [-1,1]^d
     as described in parameter_iterate.py
     """
-    #pylint:disable=too-many-locals,too-many-branches
+    #pylint:disable=too-many-locals,too-many-branches,too-many-arguments
     def __init__(self, *, denominator_localization : int = 2,
                  num_dimensions : Optional[int] = None,
                  bounding_box : Optional[List[Tuple[float,float]]]=None,

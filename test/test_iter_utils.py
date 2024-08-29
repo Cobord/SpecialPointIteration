@@ -1,7 +1,8 @@
 """
 test the iterator utilities
 """
-from src.iter_utils import with_heads # pytest ../test/*.py from src
+#pylint:disable=relative-beyond-top-level
+from ..special_point.iter_utils import with_heads
 
 def test_head():
     """

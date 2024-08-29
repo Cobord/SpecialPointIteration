@@ -116,7 +116,7 @@ class MultiParameterIterator:
 
     def __next__(self) -> Tuple[AdicRational,...]:
         """
-        the next point as a tuple of num_dimensions floats
+        the next point as a tuple of num_dimensions AdicRationals
         """
         return self._underlying.__next__()
 
@@ -130,28 +130,6 @@ class MultiParameterIterator:
                                       hard_denominator_power_cut=self._hard_denominator_power_cut)
 
 if __name__ == "__main__":
-    p = OneParameterIterator(2)
-    for cur in p:
-        # pylint:disable = invalid-name
-        to_print = ""
-        for num in cur[0]:
-            to_print += f"{num}/{cur[1][0]}^{cur[1][1]},"
-        print(to_print)
-        if p.get_current_denominator()>16:
-            break
-    p = OneParameterIterator(4,0)
-    np = make_n_param_version(
-        map(lambda fracs : (num/(fracs[1][0]**fracs[1][1]) for num in fracs[0]),p),3)
-    # pylint:disable = invalid-name
-    index = 0
-    for cur in np:
-        print(cur)
-        index += 1
-        if index>40:
-            break
-    else:
-        print("Finished the iterator before needing to break manually")
-    print("Try again")
     np = MultiParameterIterator(2,2,lambda _: 9, 11)
     # pylint:disable = invalid-name
     index = 0
