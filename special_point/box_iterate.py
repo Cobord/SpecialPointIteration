@@ -7,8 +7,8 @@ from enum import Enum, auto
 from typing import Callable, List, Optional, Tuple
 from math import sin, pi as PI, asin
 # pylint:disable=import-error
-from adic_rational import AdicRational
-from parameter_iterate import MultiParameterIterator
+from ..special_point.adic_rational import AdicRational
+from ..special_point.parameter_iterate import MultiParameterIterator
 
 class BoxTransformation(Enum):
     """

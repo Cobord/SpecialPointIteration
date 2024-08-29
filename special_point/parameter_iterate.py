@@ -10,8 +10,8 @@ from __future__ import annotations
 from random import random
 from typing import Callable, Optional, Tuple, TypeVar, Iterable
 # pylint:disable=import-error
-from adic_rational import AdicRational
-from iter_utils import make_n_param_version
+from ..special_point.adic_rational import AdicRational
+from ..special_point.iter_utils import make_n_param_version
 
 A = TypeVar("A")
 
