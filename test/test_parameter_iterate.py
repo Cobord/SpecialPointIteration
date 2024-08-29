@@ -7,7 +7,7 @@ from random import choice
 
 import pytest
 
-from special_point.iter_utils import make_n_param_version
+from ..special_point.iter_utils import make_n_param_version
 from ..special_point.parameter_iterate import OneParameterIterator
 
 def test_1d():
